@@ -36,18 +36,15 @@ public class EventService {
     public EventEntity createEvent(EventRequest request) {
         metricsService.incrementReceived();
 
-        // Создаем сущность
         EventEntity event = new EventEntity();
         event.setExternalId(request.getExternalId());
         event.setType(request.getType());
         event.setPayload(request.getPayload());
         event.setStatus(EventEntity.EventStatus.NEW);
 
-        // Сначала сохраняем в БД
         EventEntity savedEvent = eventRepository.save(event);
         log.info("Saved event to DB: {} with externalId: {}", savedEvent.getId(), savedEvent.getExternalId());
 
-        // Пытаемся положить в очередь
         boolean queued = eventQueue.offer(savedEvent);
 
         if (!queued) {

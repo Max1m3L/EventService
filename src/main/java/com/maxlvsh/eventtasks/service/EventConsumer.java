@@ -44,7 +44,6 @@ public class EventConsumer {
     @EventListener(ApplicationReadyEvent.class)
     public void startConsumers() {
         log.info("Starting event consumers...");
-        // Запускаем 2 потребителя
         for (int i = 0; i < 2; i++) {
             consumerTaskExecutor.execute(this::consumeEvents);
         }
@@ -72,10 +71,8 @@ public class EventConsumer {
         log.info("Processing event: {} with externalId: {}", event.getId(), event.getExternalId());
 
         try {
-            // Симулируем обработку
             Thread.sleep(100);
 
-            // Успешная обработка
             event.setStatus(EventEntity.EventStatus.PROCESSED);
             event.setProcessedAt(LocalDateTime.now());
 

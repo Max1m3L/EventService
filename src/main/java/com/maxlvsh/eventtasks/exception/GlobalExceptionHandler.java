@@ -59,7 +59,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    // Внутренний класс для ответа с ошибкой
     public static class ErrorResponse {
         private int status;
         private String message;
@@ -71,7 +70,6 @@ public class GlobalExceptionHandler {
             this.timestamp = timestamp;
         }
 
-        // Геттеры
         public int getStatus() { return status; }
         public String getMessage() { return message; }
         public LocalDateTime getTimestamp() { return timestamp; }

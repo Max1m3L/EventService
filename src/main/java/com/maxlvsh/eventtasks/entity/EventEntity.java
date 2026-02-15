@@ -44,7 +44,6 @@ public class EventEntity {
         NEW, PROCESSED, FAILED
     }
 
-    // Геттеры и сеттеры
     public Long getId() {
         return id;
     }

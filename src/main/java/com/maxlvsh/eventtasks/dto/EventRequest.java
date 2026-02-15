@@ -13,7 +13,6 @@ public class EventRequest {
     @NotBlank(message = "payload is mandatory")
     private String payload;
 
-    // Геттеры и сеттеры
     public String getExternalId() {
         return externalId;
     }
