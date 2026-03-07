@@ -2,6 +2,7 @@ package com.maxlvsh.eventtasks.controller;
 
 import com.maxlvsh.eventtasks.dto.EventRequest;
 import com.maxlvsh.eventtasks.entity.EventEntity;
+import com.maxlvsh.eventtasks.entity.EventStatus;
 import com.maxlvsh.eventtasks.service.EventService;
 import com.maxlvsh.eventtasks.service.MetricsService;
 import jakarta.validation.Valid;
@@ -41,7 +42,7 @@ public class EventController {
 
     @GetMapping
     public ResponseEntity<List<EventEntity>> getEventsByStatus(
-            @RequestParam(required = false) EventEntity.EventStatus status) {
+            @RequestParam(required = false) EventStatus status) {
         return ResponseEntity.ok(eventService.getEventsByStatus(status));
     }
 

@@ -1,39 +1,20 @@
 package com.maxlvsh.eventtasks.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 
-public class EventRequest {
+public record EventRequest (
+        @Null(message = "id should be empty")
+        Long id,
 
-    @NotBlank(message = "externalId is mandatory")
-    private String externalId;
+        @NotNull(message = "externalId is mandatory")
+        String externalId,
 
-    @NotBlank(message = "type is mandatory")
-    private String type;
+        @NotNull(message = "type is mandatory")
+        String type,
 
-    @NotBlank(message = "payload is mandatory")
-    private String payload;
+        @NotNull(message = "payload is mandatory")
+        String payload
+) {}
 
-    public String getExternalId() {
-        return externalId;
-    }
 
-    public void setExternalId(String externalId) {
-        this.externalId = externalId;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getPayload() {
-        return payload;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
-    }
-}

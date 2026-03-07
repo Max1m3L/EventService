@@ -3,8 +3,10 @@ package com.maxlvsh.eventtasks.service;
 
 import com.maxlvsh.eventtasks.dto.EventRequest;
 import com.maxlvsh.eventtasks.entity.EventEntity;
-import com.maxlvsh.eventtasks.exception.EventNotFoundException;
+import com.maxlvsh.eventtasks.entity.EventStatus;
 import com.maxlvsh.eventtasks.repository.EventRepository;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +36,16 @@ public class EventService {
 
     @Transactional
     public EventEntity createEvent(EventRequest request) {
+        if (eventRepository.findByExternalId(request.externalId()).isPresent())
+            throw new EntityExistsException("Event with externalId " + request.externalId() + " already exists");
+
         metricsService.incrementReceived();
 
         EventEntity event = new EventEntity();
-        event.setExternalId(request.getExternalId());
-        event.setType(request.getType());
-        event.setPayload(request.getPayload());
-        event.setStatus(EventEntity.EventStatus.NEW);
+        event.setExternalId(request.externalId());
+        event.setType(request.type());
+        event.setPayload(request.payload());
+        event.setStatus(EventStatus.NEW);
 
         EventEntity savedEvent = eventRepository.save(event);
         log.info("Saved event to DB: {} with externalId: {}", savedEvent.getId(), savedEvent.getExternalId());
@@ -59,11 +64,11 @@ public class EventService {
     @Transactional(readOnly = true)
     public EventEntity getEvent(Long id) {
         return eventRepository.findById(id)
-                .orElseThrow(() -> new EventNotFoundException("Event not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + id));
     }
 
     @Transactional(readOnly = true)
-    public List<EventEntity> getEventsByStatus(EventEntity.EventStatus status) {
+    public List<EventEntity> getEventsByStatus(EventStatus status) {
         if (status == null) {
             return eventRepository.findAll();
         }
@@ -73,6 +78,6 @@ public class EventService {
     @Transactional(readOnly = true)
     public EventEntity getLatestProcessedByType(String type) {
         return eventRepository.findLatestProcessedByType(type)
-                .orElseThrow(() -> new EventNotFoundException("No processed event found with type: " + type));
+                .orElseThrow(() -> new EntityNotFoundException("No processed event found with type: " + type));
     }
 }

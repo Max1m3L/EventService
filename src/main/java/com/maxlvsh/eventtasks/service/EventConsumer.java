@@ -1,6 +1,7 @@
 package com.maxlvsh.eventtasks.service;
 
 import com.maxlvsh.eventtasks.entity.EventEntity;
+import com.maxlvsh.eventtasks.entity.EventStatus;
 import com.maxlvsh.eventtasks.repository.EventRepository;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ public class EventConsumer {
         try {
             Thread.sleep(100);
 
-            event.setStatus(EventEntity.EventStatus.PROCESSED);
+            event.setStatus(EventStatus.PROCESSED);
             event.setProcessedAt(LocalDateTime.now());
 
             eventRepository.save(event);
@@ -91,7 +92,7 @@ public class EventConsumer {
         } catch (Exception e) {
             log.error("Failed to process event {}: {}", event.getExternalId(), e.getMessage());
 
-            event.setStatus(EventEntity.EventStatus.FAILED);
+            event.setStatus(EventStatus.FAILED);
             event.setProcessedAt(LocalDateTime.now());
             eventRepository.save(event);
             metricsService.incrementFailed();
