@@ -4,6 +4,7 @@ import com.maxlvsh.eventtasks.dto.EventRequest;
 import com.maxlvsh.eventtasks.entity.EventEntity;
 import com.maxlvsh.eventtasks.entity.EventStatus;
 import com.maxlvsh.eventtasks.service.EventService;
+import com.maxlvsh.eventtasks.service.MailSenderService;
 import com.maxlvsh.eventtasks.service.MetricsService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,13 @@ public class EventController {
 
     private final EventService eventService;
     private final MetricsService metricsService;
+    private final MailSenderService mailSenderService;
 
     @Autowired
-    public EventController(EventService eventService, MetricsService metricsService) {
+    public EventController(EventService eventService, MetricsService metricsService, MailSenderService mailSenderService) {
         this.eventService = eventService;
         this.metricsService = metricsService;
+        this.mailSenderService = mailSenderService;
     }
 
     @PostMapping
@@ -60,5 +63,19 @@ public class EventController {
         metrics.put("failed", metricsService.getEventsFailed().get());
         metrics.put("queueSize", metricsService.getQueueSize().get());
         return ResponseEntity.ok(metrics);
+    }
+
+    @GetMapping("/mail/{id}")
+    public ResponseEntity<?> sendEventToMail(@PathVariable Long id) {
+        EventEntity event = eventService.getEvent(id);
+        String massage = "Hello, your event " + event.getExternalId() + " is status: " + event.getStatus();
+
+        mailSenderService.send(
+                "levashev33maks@gmail.com",
+                "IDK",
+                massage
+        );
+
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 }
